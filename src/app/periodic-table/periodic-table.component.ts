@@ -1,9 +1,12 @@
 import { Component, OnInit } from '@angular/core';
 import { PeriodicElement } from '../models/periodic-element.model';
-import { MatTableModule } from '@angular/material/table';
+import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
+import { MatPaginator } from '@angular/material/paginator';
+import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
+import { FormControl, ReactiveFormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-periodic-table',
@@ -13,6 +16,7 @@ import { MatProgressBarModule } from '@angular/material/progress-bar';
     MatInputModule,
     MatFormFieldModule,
     MatProgressBarModule,
+    ReactiveFormsModule,
   ],
   templateUrl: './periodic-table.component.html',
   styleUrl: './periodic-table.component.scss',
@@ -20,6 +24,7 @@ import { MatProgressBarModule } from '@angular/material/progress-bar';
 export class PeriodicTableComponent implements OnInit {
   ngOnInit(): void {
     this.loadData(this.ELEMENT_DATA);
+    this.setupFilter();
   }
 
   ELEMENT_DATA: PeriodicElement[] = [
@@ -37,14 +42,28 @@ export class PeriodicTableComponent implements OnInit {
 
   displayedColumns: string[] = ['position', 'name', 'weight', 'symbol'];
 
-  dataSource: PeriodicElement[] = [];
+  dataSource!: MatTableDataSource<PeriodicElement, MatPaginator>;
 
   showLoader: boolean = true;
 
+  filterControl: FormControl = new FormControl('');
+
   loadData(data: PeriodicElement[]) {
     setTimeout(() => {
-      this.dataSource = [...data];
-      this.showLoader = false
+      this.dataSource = new MatTableDataSource(data);
+      this.showLoader = false;
     }, 3000);
+  }
+
+  applyFilter(filterValue: string) {
+    this.dataSource.filter = filterValue.trim().toLowerCase();
+  }
+
+  setupFilter() {
+    this.filterControl.valueChanges
+      .pipe(debounceTime(2000), distinctUntilChanged())
+      .subscribe((filterValue: string) => {
+        this.applyFilter(filterValue);
+      });
   }
 }

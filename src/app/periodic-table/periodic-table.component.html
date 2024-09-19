@@ -1,3 +1,7 @@
+<mat-form-field appearance="outline">
+  <mat-label>Filter</mat-label>
+  <input matInput [formControl]="filterControl" placeholder="Enter filter term">
+</mat-form-field>
 <table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
   <mat-progress-bar mode="indeterminate"></mat-progress-bar>
   <ng-container matColumnDef="position">
@@ -26,5 +30,6 @@
 @if (showLoader) {
   <mat-progress-bar mode="indeterminate"></mat-progress-bar>
 }
+
 
 
