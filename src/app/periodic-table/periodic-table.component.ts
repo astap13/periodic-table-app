@@ -1,17 +1,27 @@
 import { Component, OnInit } from '@angular/core';
 import { PeriodicElement } from '../models/periodic-element.model';
-import { MatTableDataSource, MatTableModule } from '@angular/material/table';
+import { MatTableModule } from '@angular/material/table';
 import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatProgressBarModule } from '@angular/material/progress-bar';
 
 @Component({
   selector: 'app-periodic-table',
   standalone: true,
-  imports: [MatTableModule, MatInputModule, MatFormFieldModule],
+  imports: [
+    MatTableModule,
+    MatInputModule,
+    MatFormFieldModule,
+    MatProgressBarModule,
+  ],
   templateUrl: './periodic-table.component.html',
   styleUrl: './periodic-table.component.scss',
 })
-export class PeriodicTableComponent {
+export class PeriodicTableComponent implements OnInit {
+  ngOnInit(): void {
+    this.loadData(this.ELEMENT_DATA);
+  }
+
   ELEMENT_DATA: PeriodicElement[] = [
     { position: 1, name: 'Hydrogen', weight: 1.0079, symbol: 'H' },
     { position: 2, name: 'Helium', weight: 4.0026, symbol: 'He' },
@@ -27,5 +37,14 @@ export class PeriodicTableComponent {
 
   displayedColumns: string[] = ['position', 'name', 'weight', 'symbol'];
 
-  dataSource = this.ELEMENT_DATA;
+  dataSource: PeriodicElement[] = [];
+
+  showLoader: boolean = true;
+
+  loadData(data: PeriodicElement[]) {
+    setTimeout(() => {
+      this.dataSource = [...data];
+      this.showLoader = false
+    }, 3000);
+  }
 }
