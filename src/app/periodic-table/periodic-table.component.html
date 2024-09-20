@@ -1,6 +1,10 @@
 <mat-form-field appearance="outline">
   <mat-label>Filter</mat-label>
-  <input matInput [formControl]="filterControl" placeholder="Enter filter term">
+  <input
+    matInput
+    [formControl]="filterControl"
+    placeholder="Enter filter term"
+  />
 </mat-form-field>
 <table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
   <mat-progress-bar mode="indeterminate"></mat-progress-bar>
@@ -25,11 +29,13 @@
   </ng-container>
 
   <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-  <tr (click)="openEditDialog(row)" class="element-row" mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+  <tr
+    (click)="openEditDialog(row)"
+    class="element-row"
+    mat-row
+    *matRowDef="let row; columns: displayedColumns"
+  ></tr>
 </table>
 @if (showLoader) {
-  <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+<mat-progress-bar mode="indeterminate"></mat-progress-bar>
 }
-
-
-

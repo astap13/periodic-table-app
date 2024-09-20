@@ -8,9 +8,8 @@ describe('PeriodicTableComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [PeriodicTableComponent]
-    })
-    .compileComponents();
+      imports: [PeriodicTableComponent],
+    }).compileComponents();
 
     fixture = TestBed.createComponent(PeriodicTableComponent);
     component = fixture.componentInstance;
