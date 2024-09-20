@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { PeriodicElement } from '../models/periodic-element.model';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { MatInputModule } from '@angular/material/input';
@@ -7,6 +7,8 @@ import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatPaginator } from '@angular/material/paginator';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
+import { MatDialog } from '@angular/material/dialog';
+import { EditDialogComponent } from '../edit-dialog/edit-dialog.component';
 
 @Component({
   selector: 'app-periodic-table',
@@ -22,6 +24,7 @@ import { FormControl, ReactiveFormsModule } from '@angular/forms';
   styleUrl: './periodic-table.component.scss',
 })
 export class PeriodicTableComponent implements OnInit {
+
   ngOnInit(): void {
     this.loadData(this.ELEMENT_DATA);
     this.setupFilter();
@@ -65,5 +68,13 @@ export class PeriodicTableComponent implements OnInit {
       .subscribe((filterValue: string) => {
         this.applyFilter(filterValue);
       });
+  }
+
+  readonly dialog = inject(MatDialog);
+
+  openEditDialog(elementData: PeriodicElement) {
+    this.dialog.open(EditDialogComponent,{
+      data: {...elementData},
+    });
   }
 }
