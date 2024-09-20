@@ -1,10 +1,11 @@
 # PeriodicTableApp
 
+This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 18.2.2.
+
 ## Deploy
 
 [Periodic table APP](https://sunny-kleicha-315bce.netlify.app/)
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 18.2.2.
 
 ## Task
 
