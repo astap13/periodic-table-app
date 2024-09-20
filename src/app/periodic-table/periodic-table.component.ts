@@ -24,7 +24,6 @@ import { EditDialogComponent } from '../edit-dialog/edit-dialog.component';
   styleUrl: './periodic-table.component.scss',
 })
 export class PeriodicTableComponent implements OnInit {
-
   ngOnInit(): void {
     this.loadData(this.ELEMENT_DATA);
     this.setupFilter();
@@ -51,6 +50,8 @@ export class PeriodicTableComponent implements OnInit {
 
   filterControl: FormControl = new FormControl('');
 
+  readonly dialog = inject(MatDialog);
+
   loadData(data: PeriodicElement[]) {
     setTimeout(() => {
       this.dataSource = new MatTableDataSource(data);
@@ -70,11 +71,22 @@ export class PeriodicTableComponent implements OnInit {
       });
   }
 
-  readonly dialog = inject(MatDialog);
-
   openEditDialog(elementData: PeriodicElement) {
-    this.dialog.open(EditDialogComponent,{
-      data: {...elementData},
+    const dialogRef = this.dialog.open(EditDialogComponent, {
+      data: { ...elementData },
     });
+
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result) {
+        this.updateDataSource(result);
+      }
+    });
+  }
+
+  updateDataSource(updatedElement: PeriodicElement): void {
+    const updatedData = this.dataSource.data.map((element) =>
+      element.position === updatedElement.position ? updatedElement : element
+    );
+    this.dataSource.data = updatedData;
   }
 }

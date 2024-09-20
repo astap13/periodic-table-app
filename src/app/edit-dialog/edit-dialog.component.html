@@ -1,29 +1,28 @@
 <h2 mat-dialog-title>Edit</h2>
 <mat-dialog-content>
-  <form class="form-container">
+  <form [formGroup]="editForm" class="form-container">
     <mat-form-field appearance="outline" class="input-container">
       <mat-label>Number</mat-label>
-      <input matInput type="number" placeholder="New number" value="" />
+      <input matInput type="number" formControlName="position" placeholder="New number" />
     </mat-form-field>
 
     <mat-form-field appearance="outline" class="input-container">
         <mat-label>Name</mat-label>
-        <input matInput placeholder="New name" value="" />
+        <input matInput formControlName="name" placeholder="New name" />
     </mat-form-field>
 
     <mat-form-field appearance="outline" class="input-container">
         <mat-label>Weight</mat-label>
-        <input step="0.0001" type="number" matInput placeholder="New weight" value="" />
+        <input step="0.0001" type="number" matInput formControlName="weight" placeholder="New weight" />
     </mat-form-field>
 
     <mat-form-field appearance="outline" class="input-container">
         <mat-label>Symbol</mat-label>
-        <input matInput placeholder="New symbol" value="" />
+        <input matInput formControlName="symbol" placeholder="New symbol" />
     </mat-form-field>
-
-
   </form>
 </mat-dialog-content>
 <mat-dialog-actions>
-  <button mat-button mat-dialog-close>Save</button>
+  <button mat-button (click)="onSave()">Save</button>
+  <button mat-button mat-dialog-close>Cancel</button>
 </mat-dialog-actions>
