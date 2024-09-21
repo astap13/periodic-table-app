@@ -9,6 +9,7 @@ import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { EditDialogComponent } from '../edit-dialog/edit-dialog.component';
+import { RxState } from '@rx-angular/state';
 
 @Component({
   selector: 'app-periodic-table',
@@ -20,14 +21,22 @@ import { EditDialogComponent } from '../edit-dialog/edit-dialog.component';
     MatProgressBarModule,
     ReactiveFormsModule,
   ],
+  providers: [RxState],
   templateUrl: './periodic-table.component.html',
   styleUrl: './periodic-table.component.scss',
 })
 export class PeriodicTableComponent implements OnInit {
+  constructor(
+    private state: RxState<{ periodicElementData: PeriodicElement[] }>
+  ) {}
+
   ngOnInit(): void {
+    this.state.set({ periodicElementData: this.ELEMENT_DATA });
     this.loadData(this.ELEMENT_DATA);
     this.setupFilter();
   }
+
+  periodicElementData$ = this.state.select('periodicElementData');
 
   ELEMENT_DATA: PeriodicElement[] = [
     { position: 1, name: 'Hydrogen', weight: 1.0079, symbol: 'H' },
