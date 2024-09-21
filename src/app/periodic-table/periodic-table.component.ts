@@ -10,6 +10,7 @@ import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { EditDialogComponent } from '../edit-dialog/edit-dialog.component';
 import { RxState } from '@rx-angular/state';
+import { RxIf } from '@rx-angular/template/if';
 
 @Component({
   selector: 'app-periodic-table',
@@ -20,6 +21,7 @@ import { RxState } from '@rx-angular/state';
     MatFormFieldModule,
     MatProgressBarModule,
     ReactiveFormsModule,
+    RxIf
   ],
   providers: [RxState],
   templateUrl: './periodic-table.component.html',
@@ -27,16 +29,20 @@ import { RxState } from '@rx-angular/state';
 })
 export class PeriodicTableComponent implements OnInit {
   constructor(
-    private state: RxState<{ periodicElementData: PeriodicElement[] }>
+    private state: RxState<{ periodicElementData: PeriodicElement[], showLoader: boolean }>
   ) {}
 
   ngOnInit(): void {
-    this.state.set({ periodicElementData: this.ELEMENT_DATA });
-    this.loadData(this.ELEMENT_DATA);
+    this.state.set({
+      periodicElementData: [],
+      showLoader: true,
+    });
+    this.loadData();
     this.setupFilter();
   }
 
   periodicElementData$ = this.state.select('periodicElementData');
+  showLoader$ = this.state.select('showLoader');
 
   ELEMENT_DATA: PeriodicElement[] = [
     { position: 1, name: 'Hydrogen', weight: 1.0079, symbol: 'H' },
@@ -55,17 +61,17 @@ export class PeriodicTableComponent implements OnInit {
 
   dataSource!: MatTableDataSource<PeriodicElement, MatPaginator>;
 
-  showLoader: boolean = true;
-
   filterControl: FormControl = new FormControl('');
 
   readonly dialog = inject(MatDialog);
 
-  loadData(data: PeriodicElement[]) {
+  loadData() {
     setTimeout(() => {
-      this.dataSource = new MatTableDataSource(data);
-      this.showLoader = false;
-    }, 3000);
+      this.state.set({
+        periodicElementData: this.ELEMENT_DATA,
+        showLoader: false,
+      });
+    }, 3000)
   }
 
   applyFilter(filterValue: string) {
