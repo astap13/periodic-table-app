@@ -28,9 +28,8 @@ import { PeriodicTableStateService } from './periodic-table.state';
   styleUrls: ['./periodic-table.component.scss'],
 })
 export class PeriodicTableComponent implements OnInit {
-  
   periodicTableState = inject(PeriodicTableStateService);
-  
+
   displayedColumns: string[] = ['position', 'name', 'weight', 'symbol'];
   filterControl: FormControl = new FormControl('');
 

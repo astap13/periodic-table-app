@@ -59,7 +59,5 @@ export class PeriodicTableStateService extends RxState<PeriodicTableState> {
       element.position === updatedElement.position ? updatedElement : element
     );
     this.set({ filteredData: updatedData });
-    console.log(this.get('periodicElementData'))
-    console.log(this.ELEMENT_DATA)
   }
 }
