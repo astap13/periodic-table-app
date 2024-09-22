@@ -36,7 +36,4 @@
     *matRowDef="let row; columns: displayedColumns"
   ></tr>
 </table>
-<!-- @if (showLoader) {
-<mat-progress-bar mode="indeterminate"></mat-progress-bar>
-} -->
 <div *rxIf="showLoader$"><mat-progress-bar mode="indeterminate"></mat-progress-bar></div>
