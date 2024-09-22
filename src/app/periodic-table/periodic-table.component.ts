@@ -10,6 +10,7 @@ import { EditDialogComponent } from '../edit-dialog/edit-dialog.component';
 import { RxState } from '@rx-angular/state';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { RxIf } from '@rx-angular/template/if';
+import { PeriodicTableStateService } from './periodic-table.state';
 
 @Component({
   selector: 'app-periodic-table',
@@ -27,26 +28,8 @@ import { RxIf } from '@rx-angular/template/if';
   styleUrls: ['./periodic-table.component.scss'],
 })
 export class PeriodicTableComponent implements OnInit {
-  constructor(
-    private state: RxState<{
-      periodicElementData: PeriodicElement[];
-      filteredData: PeriodicElement[];
-      showLoader: boolean;
-    }>
-  ) {}
-
-  ngOnInit(): void {
-    this.state.set({
-      periodicElementData: [],
-      filteredData: [],
-      showLoader: true,
-    });
-    this.loadData();
-    this.setupFilter();
-  }
-
-  periodicElementData$ = this.state.select('filteredData');
-  showLoader$ = this.state.select('showLoader');
+  
+  periodicTableState = inject(PeriodicTableStateService);
 
   ELEMENT_DATA: PeriodicElement[] = [
     { position: 1, name: 'Hydrogen', weight: 1.0079, symbol: 'H' },
@@ -60,19 +43,23 @@ export class PeriodicTableComponent implements OnInit {
     { position: 9, name: 'Fluorine', weight: 18.9984, symbol: 'F' },
     { position: 10, name: 'Neon', weight: 20.1797, symbol: 'Ne' },
   ];
-
+  
   displayedColumns: string[] = ['position', 'name', 'weight', 'symbol'];
   filterControl: FormControl = new FormControl('');
 
   readonly dialog = inject(MatDialog);
 
+  ngOnInit(): void {
+    this.loadData();
+    this.setupFilter();
+  }
+
+  periodicElementData$ = this.periodicTableState.select('filteredData');
+  showLoader$ = this.periodicTableState.select('showLoader');
+
   loadData() {
     setTimeout(() => {
-      this.state.set({
-        periodicElementData: this.ELEMENT_DATA,
-        filteredData: this.ELEMENT_DATA,
-        showLoader: false,
-      });
+      this.periodicTableState.loadData(this.ELEMENT_DATA);
     }, 3000);
   }
 
@@ -80,23 +67,8 @@ export class PeriodicTableComponent implements OnInit {
     this.filterControl.valueChanges
       .pipe(debounceTime(2000), distinctUntilChanged())
       .subscribe((filterValue: string) => {
-        this.applyFilter(filterValue);
+        this.periodicTableState.applyFilter(filterValue);
       });
-  }
-
-  applyFilter(filterValue: string) {
-    const filteredData = this.state
-      .get('periodicElementData')
-      .filter((element) => {
-        const searchTerm = filterValue.trim().toLowerCase();
-        return (
-          element.name.toLowerCase().includes(searchTerm) ||
-          element.weight.toString().includes(searchTerm) ||
-          element.symbol.toLowerCase().includes(searchTerm)
-        );
-      });
-
-    this.state.set({ filteredData });
   }
 
   openEditDialog(elementData: PeriodicElement) {
@@ -112,12 +84,7 @@ export class PeriodicTableComponent implements OnInit {
   }
 
   updateDataSource(updatedElement: PeriodicElement): void {
-    const updatedData = this.state
-      .get('periodicElementData')
-      .map((element) =>
-        element.position === updatedElement.position ? updatedElement : element
-      );
-    this.state.set({ periodicElementData: updatedData });
-    this.applyFilter(this.filterControl.value);
+    this.periodicTableState.updateDataSource(updatedElement);
+    this.periodicTableState.applyFilter(this.filterControl.value);
   }
 }
